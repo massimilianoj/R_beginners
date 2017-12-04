@@ -1,0 +1,618 @@
+---
+title: "Latex"
+subtitle: "Editing for Mathematics"
+author: "Massimiliano Porto"
+date: '`r format(Sys.time(), "%d %m, %Y")`'
+output: 
+  pdf_document:
+    toc: yes
+    number_sections: true
+---
+
+# Greek letters
+
+Here a list of some of the most used Greek letters in Economics:
+
+```{r, include = FALSE}
+library(tidyverse)
+
+# "sin" -> "\\sin"
+latexify = function(base, asis = FALSE) {
+  if (asis) return(base)
+  paste0("\\", base)
+}
+
+# "sin" -> "`\\sin`" 
+put_codechunk = function(base, ...) paste0("`", latexify(base, ...), "`")
+
+# "sin" -> "$\\sin$"
+put_result = function(base, ...) paste0("$", latexify(base, ...), "$")
+
+# Create a cheatsheet table
+math_table = function(cmd, description = NULL) {
+  # cmd = c("sin", "cos", "log") 
+  # description = c("sine", "cosine", "logarithm")
+  #
+  # => A tibble with additional columns like 
+  #      latex = c("\\sin", "\\cos", "\\log") 
+  #    will be created 
+  # If description is NULL, cmd column is copied. 
+  
+  if (is.null(description)) description = cmd 
+  tbl = tibble(description, cmd) %>% 
+    mutate(latex = put_codechunk(cmd), 
+           result = put_result(cmd)) %>% 
+    select(-cmd)
+}
+
+two_column_layout = function(s) {
+  cat("<div class=\"twocol\">")
+  cat("<div class=\"left\">")
+  cat("**LaTeX CODE**\n")
+  cat("```", "$$", s, "$$", "```", sep = "\n")
+  cat("</div><!-- left -->")
+  cat("<div class=\"right\">")
+  cat("**RESULT**\n")
+  cat("$$", s, "$$", sep = "\n")
+  cat("</div><!-- right -->")
+  cat("</div><!-- twocol -->")
+}
+```
+
+
+```{r, echo = FALSE}
+greek_letters = c('alpha', 'beta', 'gamma', 'theta', 'sigma', 
+                  'rho', 'lambda', 'phi', 'psi', 'epsilon')
+knitr::kable(math_table(greek_letters))
+```
+
+For the corresponding capital letter, we just write in the same way but with initial capital letter.
+
+Example
+
+```{r, echo = FALSE}
+capital_letters = c("Gamma", "Lambda", "Sigma", "Psi", 
+                    "Delta", "Xi", "Upsilon", "Omega", 
+                    "Theta", "Pi", "Phi")
+knitr::kable(math_table(capital_letters))
+```
+
+
+#Parenthesis
+We can write parenthesis and brackets just giving the input on the keyboard $()$ or $[]$. This does not work for braces.
+
+Another way is to write parenthesis with the following notation:
+
+```{r, echo = FALSE, results = "asis"}
+s_paren = paste(
+  "\\left(",
+  "\\right) \\\\",
+  "\\left[",
+  "\\right]", 
+  sep = "\n") %>% two_column_layout
+```
+
+
+that is writing `\left` _before opening the parenthesis_ and `\right` _before closing the parenthesis_. 
+
+In case of braces, we should use the following notation:
+
+```{r, echo = FALSE, results = "asis"}
+s_curly = paste(
+  "\\left\\{", 
+  "\\right\\}",
+  sep = "\n") %>% two_column_layout
+```
+
+Note the difference with brackets that are written `\left\` and `\right\`.
+
+Example:
+
+```{r, echo = FALSE, results = "asis"}
+s_complex_braces = paste(
+"10 \\cdot ",
+"  \\left\\{",
+"    5 + \\left[",
+"      3 + 2 \\cdot ",
+"         \\left(",
+"            9-1\\right)",
+"        \\right]  ",
+"  \\right\\}",
+sep = "\n") %>% two_column_layout
+```
+
+The opportunity to write the full notation for parenthesis and brackets will be clear when dealing whit fractions. 
+
+#Fractions
+To write fractions the inputs to give are `\frac` and then _numerator and denominator written between two braces_. With an example will be clear.
+
+Example:
+
+```{r, echo = FALSE, results = "asis"}
+s_frac = paste(
+"\\frac{5}{2}",
+sep = "\n")%>% two_column_layout
+
+```
+
+
+Example:
+
+```{r, echo = FALSE, results = "asis"}
+s_frac01 = paste(
+"\\frac{\\alpha}{1-\\alpha} = \\phi",
+sep = "\n")%>% two_column_layout
+
+```
+
+
+
+#Paranthesis & Fraction
+If we write a fraction in parenthesis with the shortcut
+
+```{r, echo=FALSE, results="asis"}
+s_pfrac = paste(
+ "( \\frac{5}{2})", 
+sep = "\n")%>% two_column_layout
+
+```
+
+the parenthesis do not fit the fraction.
+
+If we write with full notation
+
+```{r, echo=FALSE, results="asis"}
+s_pfrac01 = paste(
+  "\\left(",
+  "\\frac{5}{2}",
+  "\\right)",
+sep = "\n")%>% two_column_layout
+
+```
+
+we will have an appropriate result.
+
+Example:
+
+```{r, echo=FALSE, results="asis"}
+s_pfrac02 = paste(
+  "\\frac{Y}{L} =",
+  "\\left(",
+  "\\frac{K}{L}, 1",
+  "\\right)",
+sep = "\n")%>% two_column_layout
+
+```
+
+
+
+#Exponential
+
+To write the exponential we use the symbol `^` 
+
+```{r, echo=FALSE, results="asis"}
+s_expo = paste(
+"2^5",
+sep = "\n")%>% two_column_layout
+
+```
+
+
+In case of operation in the exponential, we need to _use braces after_ `^` 
+
+
+Example:
+
+```{r, echo=FALSE, results="asis"}
+s_expo01 = paste(
+ "F(K, L) = ",
+ "K^\\alpha L^\\beta",
+sep = "\n")%>% two_column_layout
+
+```
+
+
+Example:
+
+```{r, echo=FALSE, results="asis"}
+s_expo02 = paste(
+  "F(K, L) =",
+  "\\left[",
+  "\\gamma K^\\frac{\\sigma - 1}{\\sigma}",
+  " + (1 - \\gamma)L^\\frac{\\sigma - 1}{\\sigma}",
+  "\\right]^\\frac{\\sigma}{\\sigma - 1}",
+sep="\n")%>% two_column_layout
+
+```
+
+
+
+#Subscript
+
+To write subscript use the symbol `_`
+
+```{r, echo=FALSE, results="asis"}
+s_sub = paste(
+  "t_0",
+sep= "\n")%>% two_column_layout
+
+```
+
+
+
+We use _braces in case of operation in subscript_
+
+Example
+
+```{r, echo=FALSE, results="asis"}
+s_sub01 = paste(
+  "y_ty_{t-j}",
+sep = "\n")%>% two_column_layout
+```
+
+
+#Derivative
+
+Example:
+
+```{r, echo=FALSE, results="asis"}
+s_der = paste(
+  "\\frac{dk}{k}",
+sep="\n")%>% two_column_layout
+```
+
+To write partial differentiation, write `\partial` in the fraction notation
+
+Example:
+
+```{r, echo=FALSE, results="asis"}
+s_der01 = paste(
+  "\\frac{",
+  "\\partial F}{",
+  "\\partial K}",
+  "r + \\delta",
+sep="\n")%>% two_column_layout
+```
+
+
+#Summation
+
+The code to write summation is the following: symbol of `\sum_` followed by _braces with lower bound of summation_ and `^` _before the brace with the upper bound of summation_. 
+
+Example:
+
+```{r, echo=FALSE, results="asis"}
+s_sum = paste(
+  "\\sum_{t_0}^{\\infty}",
+sep = "\n")%>% two_column_layout
+```
+
+An example summing up what we saw until now:
+
+```{r, echo=FALSE, results="asis"}
+s_sum01 = paste(
+  "\\mathcal L =",
+  "\\sum_{t=0}^{\\infty}",
+  "\\left(",
+  "\\frac {1}{1 + \\rho}",
+  "\\right)^{t} u(c_t)",
+  "\\frac{L_t}{H}",
+  " + \\lambda",
+  "\\left[",
+  "S_0 + \\sum_{t=0}^{\\infty}",
+  "R_t^{-1}w_t",
+  "\\left(",
+  "\\frac{L_t}{H}",
+  "\\right)",
+  "- \\sum_{t=0}^{\\infty} R_t^{-1}c_t",
+  "\\left(",
+  "\\frac{L_t}{H}",
+  "\\right)",
+  "\\right]",
+sep="\n")%>% two_column_layout
+```
+
+
+
+#Limit
+
+The code for limit is written as follows:
+
+```{r, echo = FALSE, results="asis"}
+s_lim = paste(
+  "\\lim_{t\\to\\infty}",
+sep = "\n")%>% two_column_layout
+```
+
+
+Example: 
+
+```{r, echo=FALSE, results="asis"}
+s_lim01 = paste(
+  "\\lim_",
+  "{t\\to\\infty}",
+  "R_t^{-1}S_t = 0",
+sep = "\n")%>% two_column_layout
+```
+
+Example
+
+```{r, echo = FALSE, results="asis"}
+s_lim02 = paste(
+  "e^{",
+  "lim_{\\gamma\\to0}",
+  "\\frac{1}{\\gamma}ln",
+  "\\left[",
+  "\\alpha K^\\gamma + (1 - \\alpha)L^\\gamma",
+  "\\right]}",
+sep = "\n")%>% two_column_layout
+```
+
+
+#Integrals
+
+```{r, echo = FALSE, results="asis"}
+s_int = paste(
+  "\\int_0^\\infty",
+sep = "\n")%>% two_column_layout
+```
+
+
+Example
+
+<div class="twocol">
+<div class="left">
+```
+$$
+\int_0^\infty
+  \left[
+    r(t)e^{-R(t)}S(t) 
+    + e^{-R(t)} w(t) 
+    \frac{L(t)}{H}
+    -e^{-R(t)}c(t) 
+    \frac{L(t)}{H} 
+  \right]
+  dt
+$$
+```
+</div><!-- .left -->
+<div class="right">
+$$
+\int_0^\infty\left[r(t)e^{-R(t)}S(t) + e^{-R(t)} w(t) \frac{L(t)}{H}-e^{-R(t)}c(t) \frac{L(t)}{H} \right]dt
+$$
+</div><!-- .left -->
+</div>
+
+#Optimization problem
+
+Following how we set an optimization problem:
+```{r, echo=FALSE, results="asis"}
+s_int = paste(
+  "\\max_{x_{1}, x_{2}}", 
+  "(x_{1}^{\\alpha} + x_{2}^{\\alpha})",
+  "^{\\frac{1}{ \\alpha}}",
+sep = "\n")%>% two_column_layout
+```
+```{r, echo=FALSE, results="asis"}
+s_int = paste(
+  "\\text {subject to}", 
+  "\\quad p_{1}x_{1}+p_{2}x_{2} \\leq I",
+sep = "\n")%>% two_column_layout
+```
+
+```{r, echo=FALSE, results="asis"}
+s_int = paste(
+  "\\mathcal L", 
+  "(x_1, x_2, \\lambda) \\equiv",
+sep = "\n")%>% two_column_layout
+```
+  
+#Matrix
+
+The following example shows how to write a matrix.
+
+Note that `\bmatrix` stands for _bracket matrix_ while `\pmatrix` stands for _parenthesized matrix_. Other kinds of matrix are available.
+
+Moreover, `\vdots` stands for _vertical dots_ while `\ddots` for _diagonal dots_. `\cdots` stands for _central dots_, used also as multiplication sign.
+
+**LaTeX Code**
+<div class="twocol">
+<div class="left">
+```
+$$
+A =
+\begin{bmatrix}
+  a_{11} & a_{12} & a_{13} & \dots & a_{1n} \\
+  a_{21} & a_{22} & a_{23} & \dots & a_{2n} \\
+  \vdots & \vdots & \vdots & \vdots & \vdots\\
+  a_{m1} & a_{m2} & a_{m3} & \dots & a_{mn} \\
+\end{bmatrix}
+\ne
+B =
+\begin{pmatrix}
+ b_{11} & b_{12} & b_{13} & \cdots & b_{1n} \\
+ b_{21} & \ddots & b_{23} & \cdots & b_{2n} \\
+ ...&...&... & \ddots &... \\
+ b_{m1} & b_{m2} & b_{m3} & \dots & b_{mn} \\
+\end{pmatrix}
+$$
+```
+**RESULT**
+</div><!-- .left -->
+<div class="right">
+$$
+A =
+\begin{bmatrix}
+  a_{11} & a_{12} & a_{13} & \dots & a_{1n} \\
+  a_{21} & a_{22} & a_{23} & \dots & a_{2n} \\
+  \vdots & \vdots & \vdots & \vdots & \vdots\\
+  a_{m1} & a_{m2} & a_{m3} & \dots & a_{mn} \\
+\end{bmatrix}
+\ne
+B =
+\begin{pmatrix}
+ b_{11} & b_{12} & b_{13} & \cdots & b_{1n} \\
+ b_{21} & \ddots & b_{23} & \cdots & b_{2n} \\
+ ...&...&... & \ddots &... \\
+ b_{m1} & b_{m2} & b_{m3} & \dots & b_{mn} \\
+\end{pmatrix}
+$$
+</div><!-- .left -->
+</div>
+
+
+Another example with matrix
+
+**LaTeX Code**
+<div class="twocol">
+<div class="left">
+```
+$$
+PAQ=\left[
+  \begin{array}{c|c}
+    I_{d\times d} & O_{d\times(n-d)}\\
+    \hline O_{(m-d)\times d} & O_{(m-d)\times(n-d)}
+  \end{array}
+\right]
+$$
+```
+**RESULT**
+</div><!-- .left -->
+<div class="right">
+$$
+PAQ=\left[
+  \begin{array}{c|c}
+    I_{d\times d} & O_{d\times(n-d)}\\
+    \hline O_{(m-d)\times d} & O_{(m-d)\times(n-d)}
+  \end{array}
+\right]
+$$
+</div><!-- .left -->
+</div>
+
+#Equalities and Inequalities
+
+```{r, echo = FALSE}
+equalities = tribble(
+  ~desription,                ~cmd,    ~asis,
+  "Equality or assignment",   "=",     TRUE,
+  "Inequality",               "neq",   FALSE,
+  "Less than",                "<",     TRUE,
+  "Less than or equal to",    "leq",   FALSE,
+  "Greater than",             ">",     TRUE,
+  "Greater than or equal to", "geq",   FALSE,
+  "Approximately equal to",   "simeq", FALSE,
+  "Identical to",             "equiv", FALSE)
+  
+equalities = equalities %>% 
+  by_row(function(x) put_codechunk(x$cmd, x$asis), 
+         .collate = "rows", .to = "latex") %>% 
+  by_row(function(x) put_result(x$cmd, x$asis), 
+         .collate = "rows", .to = "result") %>% 
+  select(-asis, -cmd)
+
+knitr::kable(equalities)
+```
+
+#Subset and Functions
+
+```{r, echo = FALSE}
+set_operations = tribble(
+  ~desription,            ~cmd,
+  "A is included in B",   "A \\subset B",
+  "A includes B",         "A \\supset B",
+  "A intersection B",     "A \\cap B",
+  "A union B",            "A \\cup B", 
+  "x is in A",            "x \\in A",
+  "A contains x",         "A \\ni x",
+  "x is not in A",        "x \\notin A",
+  "for some x",           "\\exists x",
+  "for any x",            "\\forall x",
+  "tends to / maps into", "\\to",
+  "gets",                 "\\gets",  # I've never used this...
+  "A implies B",          "A \\implies B")
+
+set_operations = set_operations %>% 
+  by_row(function(x) put_codechunk(x$cmd, TRUE), 
+         .collate = "rows", .to = "latex") %>% 
+  by_row(function(x) put_result(x$cmd, TRUE), 
+         .collate = "rows", .to = "result") %>% 
+  select(-cmd)
+
+knitr::kable(set_operations)
+```
+
+# Mathematical fonts
+
+```{r, echo = FALSE}
+math_fonts = tribble(
+  ~desription,                                      ~cmd,
+  "Set of complex numbers",                        "\\mathbb{C}",
+  "Set of rational numbert",                       "\\mathbb{Q}",
+  "Set of real numbers",                           "\\mathbb{R}",
+  "Expected value of a random variable",           "\\mathbb{E}", 
+  "Lagrangian",                                   "\\mathcal{L}",
+  "Hamiltonian",                                  "\\mathcal{H}")
+
+math_fonts = math_fonts %>% 
+  by_row(function(x) put_codechunk(x$cmd, TRUE), 
+         .collate = "rows", .to = "latex") %>% 
+  by_row(function(x) put_result(x$cmd, TRUE), 
+         .collate = "rows", .to = "result") %>% 
+  select(-cmd)
+
+knitr::kable(math_fonts)
+```
+
+
+
+# Others
+
+**LaTeX Code**
+<div class="twocol">
+<div class="left">
+```
+$$
+\mathrm{sgn}:S_{n}\to\{-1,1\}
+$$ 
+```
+**RESULT**
+</div><!-- .left -->
+<div class="right">
+$$
+\mathrm{sgn}:S_{n}\to\{-1,1\}
+$$ 
+</div><!-- .left -->
+</div>
+
+**LaTeX Code**
+<div class="twocol">
+<div class="left">
+```
+$$
+  \mathrm{sgn}(\sigma)=\begin{cases}
+  -1 & \mbox{if }\sigma\mbox{ is odd}\\
+  +1 & \mbox{if }\sigma\mbox{ is even}.
+  \end{cases}
+$$
+```
+**RESULT**
+</div><!-- .left -->
+<div class="right">
+$$
+  \mathrm{sgn}(\sigma)=\begin{cases}
+  -1 & \mbox{if }\sigma\mbox{ is odd}\\
+  +1 & \mbox{if }\sigma\mbox{ is even}.
+  \end{cases}
+$$
+</div><!-- .left -->
+</div>
+
+
+
+
+
+
+
+
+

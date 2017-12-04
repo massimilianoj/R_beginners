@@ -1,0 +1,399 @@
+---
+title: "R Markdown"
+subtitle: "Notes for editing"
+author: "Massimiliano Porto^[Kobe University]"
+date: '`r format(Sys.time(), "%d %m, %Y")`'
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    fig_caption: true
+    citation_package: natbib
+abstract: |
+    This is the abstract. 
+    
+    
+    **Keywords:** a, b
+    
+bibliography: library.bib
+biblio-style: apa
+fontsize: 12pt
+---
+
+
+# Setting-up 
+
+Before starting writing our document let's customize YAML header. 
+
+When opening R Markdown you see a YAML header similar to the following:
+
+```
+---
+title: "Untitled"
+author: "Massimiliano Porto"
+date: "25 maggio 2017"
+output: pdf_document
+---
+```
+So we have four components of basic YAML header:
+
+- **title**: you can choose the title when you open R Markdown. However, it is always possible to change it;
+- **author**: the author's name;
+- **date**: the date when you opened the R Markdown document; 
+- **output**: the format of output that you choose when opening R Markdown. However, you can always change later. For example, if you change mind and want to render your document in html you can write html_document instead of pdf_document.
+
+Now we have a look at other components of YAML header that we can add.^[for more details read [R Markdown from RStudio](http://rmarkdown.rstudio.com/pdf_document_format.html#figure_options)(http://rmarkdown.rstudio.com/pdf_document_format.html#figure_options)] 
+
+Let's see how we set up the YAML for this document.
+
+```
+---
+title: "R Markdown"
+subtitle: "Notes for editing"
+author: "Massimiliano Porto^[Kobe University]"
+date: '`r format(Sys.time(), "%d %m, %Y")`'
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    fig_caption: true
+    citation_package: natbib
+abstract: |
+    This is the abstract. 
+    
+    **Keywords:** a, b
+    
+bibliography: library.bib
+biblio-style: apa
+fontsize: 12pt
+---
+```
+- **date**: we choose another format for the date. More important, we want that the document will report automatically the date when we finally knit to pdf without the need of changing it manually. For this purpose we set up the following function 
+
+```{r, eval=FALSE, include=TRUE}
+'`r format(Sys.time(), "%d %m, %Y")`'
+```
+
+- Note that:
+    + `%d` stands for day;
+    + `%m` stands for numeric month, `%b` stands for alphabetic (abbreviated) month while `%B` stands for alphabetic (full) month;
+    + `%Y` stands for 4 digit year while `%y` for 2 digit year;
+- **subtitle**: we can add here a subtitle;
+- **author**: we can add affiliation as shown;
+- **table of contents**: in order to add a table of contents, we set up
+    + **toc: true** that basically add a default table of contents;
+    + **toc_depth: 2** that is an option that let us control the depth of headers we want to show in our table of contents. In this case we chose only 2 (the default option is 3);
+    + **number_sections: true** is the option to number the headers
+- **figure**: there are a number of options concerning the figures
+    + **fig_caption: true** make sure that whatever images are included in the document are treated as figures in which our caption in brackets in a Markdown call is treated as the caption in the figure (default option if false). We can add other options such as
+    + **fig_with** and **fig_height**  to control the default figure width and height (we didn't add this option because we kept 6 x 4.5 default option)
+- **citation_package: natbib** is a package to process citations;
+- **abstract**: here we write the abstract. Note that the defauls template doesn't render keywords. As consequence, we render keywords as displayed. However, you can install a number of templates with the **rticles package** as follows ```install.packages("rticles")```. The templates will be available on the first window after opening R Markdown;
+- **fontsize: 12pt** controls for the font size (e.g. 10pt, 11pt, 12pt)
+- **bibliography: library.bib** to set up the bibliography. However, there are also other options. To manage bibligraphy it's better to install a reference manager program such as **Mendeley**, **BibDesk** (for Mac) ecc. With these programs you can build your library and assign to each article, journal ecc. a **citation key** that will be read by R Markdown. The citations can be written as follows `[@krugman1980, pp. 951-952]` with output [@krugman1980, pp. 951-952], `[@krugman1980, pp. 951-952; @melitz2003, p. 1701]` ^[[@krugman1980, pp. 951-952; @melitz2003, p. 1701]] (we will see later how to set footnotes) or `@krugman1980` @krugman1980 for in-text citation. If you add `-` before `@` you avoid to mention again the author  `[-@krugman1980]` [-@krugman1980]. 
+    + It is possible to create a bibliography with `knitcitations`.^[for more details read [R for Fledglings](https://www.uvm.edu/rsenr/vtcfwru/R/fledglings/08_Markdown.html)(https://www.uvm.edu/rsenr/vtcfwru/R/fledglings/08_Markdown.html)] Install the package and upload the library `install.packages("knitcitations")` and `library("knitcitations")`;
+    + With function `bib_metadata()` returns a citation’s metadata. 
+    + The function `citet()` is used to cite as in-line text, while `citep()` is used to cite parenthetically;
+    + The function `write.bibtex()` let you create your own .bib file.
+    + You can create easily the bibtex citation downloading them from Google Scholar through the cite button below a search result [Figure 1];
+- **biblio-style: apa**: this option let you choose the style for citations and references. Here we chose *American Psychological Association 6th edition* style (apa). You can browse more style here [Zotero Style Repository](https://www.zotero.org/styles)(https://www.zotero.org/styles)
+
+Following an example with ```knitcitations```:
+    
+    
+```{r}
+library("knitcitations")
+bib_metadata("Gravity chains: Estimating bilateral trade flows when parts and components trade is important")
+citet("Gravity chains: Estimating bilateral trade flows when parts and components trade is important")
+citep("Gravity chains: Estimating bilateral trade flows when parts and components trade is important")
+```
+
+    
+```{r}
+write.bibtex(file="references.bib")
+
+# to check if the file exists
+file.exists("references.bib")
+```
+
+After you set up your.bib file (in this case *references.bib*) you can open and check the **citation key**  to make citations as showed earlier with `@citation_key`. We showed this as an alternative. However, as you will discover it is easier to manage citations through a reference manager program.
+
+## Another example
+
+The folliwing is the YAML header used to edit *R for Beginners*.
+
+```
+---
+title: "R for Beginners"
+subtitle: "Draft II"
+author: "Massimiliano Porto^[Kobe University]"
+date: "October 26, 2017"
+output: 
+  bookdown::pdf_book:
+    template: null
+    toc: true
+    toc_depth: 4
+    number_sections: true
+    fig_caption: true
+    citation_package: natbib
+header-includes:
+  - \setlength{\parindent}{2em}
+  - \setlength{\parskip}{0em}
+  - \usepackage{mathpazo}
+fontsize: 12pt
+documentclass: scrbook
+---
+
+```
+
+# Emphasis, link, images and ...
+
+Objective      |   Syntax                             | Outcome
+---------------|--------------------------------------|-----------
+italics        |   `*italics*` or `_italics_`         | *italics* or _italics_
+bold           |   `**bold**` or  `__bold__`          | **bold** or __bold__      
+link           |`[R](https://www.r-project.org/)` |[R](https://www.r-project.org/)
+footnotes      |`^[Greene, 2007]` or `Greene, 2007^[The note here]` |^[Greene, 2007] or Greene, 2007^[The note here]
+image          |`![RStudio](asset/figures/markdown/markdown.png)` |![RStudio](asset/figures/markdown/markdown.png)
+
+Moreover, we set block quote like this `>block quote`     
+
+> block quote
+
+and we create a task list as follows:
+
+```
+- [x] Select article and submit your summary for approval
+- [ ] Download the data
+- [ ] Draft tables of empirical results produced
+```
+
+- [x] Select article and submit your summary for approval
+- [ ] Download the data
+- [ ] Draft tables of empirical results produced
+
+
+# Paragraph
+
+You set the paragraph adding its title after `#`. Every `#` corresponds to a level of paragraph as in the example 
+
+```
+# List
+
+## Unordered list
+
+### Example 1
+
+```
+
+
+# List
+
+## Unordered list
+
+### Example 1
+
+Here the input ...
+
+```
+- List 1
+- List 2
+    + List 2.1
+    + List 2.2
+```
+... and this is the output
+
+- List 1
+- List 2
+    + List 2.1
+    + List 2.2
+
+### Example 2
+
+```
+* List 1
+* List 2
+    + List 2.1
+    + List 2.2
+```
+* List 1
+* List 2
+    + List 2.1
+    + List 2.2
+    
+## Ordered list
+
+```
+1. List
+2. List
+    i) sublist
+    ii) sublist 
+```
+
+1. List
+2. List
+    i) sublist
+    ii) sublist 
+    
+
+
+# Tables
+
+## Creating tables
+
+Following we show how to create simple tables and their output.
+
+```
+Continent   Country    Capital 
+---------   -----      ------ 
+Asia        Japan      Tokyo
+Asia        China      Beijing
+Europe      Italy      Rome
+Europe      Germany    Berlin
+```
+
+Continent   Country    Capital 
+---------   -----      ------ 
+Asia        Japan      Tokyo
+Asia        China      Beijing
+Europe      Italy      Rome
+Europe      Germany    Berlin
+
+
+```
+Continent |  Country  |  Capital 
+----------|-----------|---------- 
+Asia      | Japan     | Tokyo
+Asia      | China     | Beijing
+Europe    | Italy     | Rome
+Europe    | Germany   | Berlin
+```
+
+Continent |  Country  |  Capital 
+----------|-----------|---------- 
+Asia      | Japan     | Tokyo
+Asia      | China     | Beijing
+Europe    | Italy     | Rome
+Europe    | Germany   | Berlin
+
+
+```
+---------------------------------
+Continent   Country     Capital 
+(code)       (code)     (code)  
+--------    -------     ---------
+AS            JPN       TYO     
+
+AS            CHN       BJ      
+
+EU            ITA       RM      
+
+EU            DEU       BER     
+---------------------------------
+```
+
+---------------------------------
+Continent   Country     Capital 
+(code)       (code)     (code)  
+--------    -------     ---------
+AS            JPN       TYO     
+
+AS            CHN       BJ      
+
+EU            ITA       RM      
+
+EU            DEU       BER     
+---------------------------------
+
+
+## Creating tables with knitr::kable and kableExtra^[For details about the package [Create Awesome HTML Table with knitr::kable and kableExtra](http://haozhu233.github.io/kableExtra/awesome_table_in_html.html)(http://haozhu233.github.io/kableExtra/awesome_table_in_html.html)]
+
+
+```{r, eval=FALSE, include=TRUE}
+install.packages("kableExtra")
+```
+
+I create an Excel file with European Community - Japan bilateral trade in the Sixties.
+
+```{r, tidy=TRUE}
+library(knitr)
+library(kableExtra)
+library("readxl")
+EU_Japan_trade_1960s <- read_excel("C:/Users/porto/Desktop/PhD_Research/PhD_Thesis_wip/Tables/EU_Japan_trade__1960s.xlsx")
+```
+
+```{r, tidy=TRUE }
+kable(EU_Japan_trade_1960s, caption = "EC - Japan bilateral trade, 1960s, million US dollar", booktabs = T, format = "latex") %>%
+  kable_styling(latex_options = "hold_position") %>%
+  add_header_above(c("", "Exports to Japan[note]" = 4, "Imports from Japan[note]" = 4)) %>%
+  add_indent(c(2:6)) %>%
+  add_footnote(c("FOB values", "CIF values"), notation = "number")
+```
+
+
+This is the basics to create quality tables in LaTeX. For more options read the article in footnote.
+
+**REMARK**: I could not find a way to add the source under the table using this package. The following solution to add the source is provided by Professor Kenji Sato. 
+
+
+```{r, tidy=TRUE}
+
+add_source <- function(.kable, ...) {
+  str <- add_footnote(.kable, ...)
+  gsub("\\textsuperscript{a}", "Source:", str, fixed = TRUE)
+}
+```
+
+```{r , tidy=TRUE}
+kable(EU_Japan_trade_1960s, caption = "EC - Japan bilateral trade, 1960s, million US dollar", booktabs = T, format = "latex") %>%
+  kable_styling(latex_options = "hold_position") %>%
+  add_header_above(c("", "Exports to Japan[note]" = 4, "Imports from Japan[note]" = 4)) %>%
+  add_indent(c(2:6)) %>%
+  add_footnote(c("FOB values", "CIF values"), notation = "number") %>%
+  add_source("IMF, Directorate of Trade Statistics, online database")
+```
+
+As you can see now I have the source under the table as I needed. If you want to replicate it, you need to copy and run the `add_source` function.
+
+# Slides with Beamer
+
+You can create slides with Beamer (Fig. \ref{beamer})
+
+![Slides with Beamer \label{beamer}](asset/figures/markdown/beamer.png)
+
+Basically you set up the header as in R Markdown. Following an example for Beamer
+
+```
+---
+title: "Title"
+subtitle: "Draft"
+author: "Massimiliano Porto"
+date: "October 06, 2017"
+institute: "Kobe University"
+department: "Faculty of Economics"
+output:
+  beamer_presentation:
+    theme: "Boadilla"
+    colortheme: "whale"
+    fonttheme: "structurebold"
+---
+
+```
+
+The main difference with R Markdown is the **beamer_presentation** options. You can find different themes [here](http://deic.uab.es/~iblanes/beamer_gallery/) http://deic.uab.es/~iblanes/beamer_gallery/
+
+You set up the title of slides as you set up paragraphs and divide pages by
+
+```
+-------------------
+```
+
+# Citations
+
+![Google Scholar citation](asset/figures/google_scholar/google_scholar_2.png){#anchor}
+
+
+
+# References
