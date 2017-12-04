@@ -17,6 +17,7 @@ Part 2 is aiming at building a database. Therefore, all the operations, packages
  - Merge Two Databases
  - Dates in R
  - Plot
+ 
 I uploaded the databases I downloaded from the OECD (named ppp, cpi, gdp) and that I used for the examples. In this way it is possible to replicate.
 
 2. "Edit with R Markdown": this documents show how to edit in R Markdown. It supposes that you installed LaTeX system to knit it to pdf. 
